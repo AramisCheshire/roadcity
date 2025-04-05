@@ -36,6 +36,8 @@ import numpy as np
 
 
 def fit(p):
+    print("fitting:")
+    print(p)
     L = len(p)
     if L > 0:
         a=[]
@@ -52,8 +54,11 @@ def fit(p):
 
 
         X = np.array(b)
+        #print(X)
         Y = np.array(y)
+        #print(Y)
         W = np.linalg.solve(X,Y)
+        #print(W)
         return W
     else:
         return 0
@@ -152,16 +157,72 @@ print(py)
 print(methods.NewtonIsRoot(py))
 
 
-a0 = 1
-b0 = 5
-a1 =4
+a0 = 0
+b0 = 2
+a1 = 1
 b1 = 3
-a2= 2.3
-b2= 2.55
+a2= 2
+b2= 6
+a3 = 3
+b3 = 11
+a4 = 4
+b4 = 18
+p3 = fit([[a0,b0],[a1,b1],[a2,b2],[a3,b3],[a4,b4]])
 
-p3 = fit([[a0,b0],[a1,b1],[a2,b2]])
 
-methods.Overlap(py,p3)
+p4 = fit([[0,10],[1,11],[2,26],[3,91],[4,266]])
+
+
+#methods.Overlap(p3,p4)
+
+
+#iteratively try to find a polynomial that doesn't overlap with p4
+
+overlap = 1
+degree = 1
+
+R = 10
+T= 10
+
+rotate_attempts = 0
+translate_attempts = 0
+attempts = 0
+coff_select = 0
+
+coffs = np.array([R,T])
+
+while overlap == 1:
+    #coffs = np.array([R,T])
+    print("trying:")
+    print(coffs)
+    if methods.Overlap(coffs,p4) == 0:
+        overlap = 0
+        print("fit found")
+    else:
+        for coffitem in range(0,degree+1):
+            ranitem = float(random.randint(2,10))/8.0
+            print("modifying coefficient %f with %f"%(coffs[coffitem],ranitem))
+            coffs[coffitem] = coffs[coffitem]*-1.0*ranitem + 0.22 #nparray automatically rounds values to ints
+            print("its now %f"%coffs[coffitem])
+        attempts = attempts + 1
+        print("unsuccessful")
+
+    if attempts%10 == 0:
+        degree=degree+1
+        coffs = np.append(coffs,10)
+        
+
+    if attempts > 50:
+        print("failed to find fit")
+        break
+
+
+    
+
+
+
+
+
 
 
 def fitcompare(x0,x1,y0,y1,s0,s1):
